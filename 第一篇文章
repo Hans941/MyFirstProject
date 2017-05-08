@@ -1,0 +1,85 @@
+#include <graphics.h>
+#include<conio.h>
+#include <time.h>
+#include <math.h>
+
+#define GRAPH_WIDE 1300
+#define GRAPH_HIGH 900
+
+void playgame();
+void initgame();
+void makePlayer();
+void moveOrder();
+
+struct PLARER//属性应该有小球坐标 (x, y)，半径 r ,以及移动速度 step
+{
+	int x;
+	int y;
+	int r;
+	float step;
+};
+
+struct APPLE//同小球，因为不用移动就不用step
+{
+	int    x;
+	int    y;
+	int r;
+};
+
+struct APPLE apple;
+struct PLARER player;
+int direction;
+
+void main()
+{
+	initgraph(GRAPH_WIDE, GRAPH_HIGH);
+	playgame();
+	closegraph();
+}
+
+void playgame()
+{
+	initgame();
+	while (1)
+	{
+		if (_kbhit())//如果有输入的话，改变方向.没有就方向不变
+		{
+			direction = _getch();
+		}
+		moveOrder();//改变玩家的坐标
+		cleardevice();
+		makePlayer();//建立新玩家图形
+	}
+}
+
+void initgame()
+{
+	setbkcolor(LIGHTGRAY);//设置背景色
+	setfillcolor(CYAN);//设置填充色
+	setlinecolor(CYAN);//设置线条色
+	player.r = 50;//初始化玩家属性
+	player.step = 1;
+	player.x = GRAPH_WIDE / 2;//初始化玩家图形坐标
+	player.y = GRAPH_HIGH / 2;//初始化玩家图形坐标
+	makePlayer();
+}
+
+void makePlayer()
+{
+	fillcircle(player.x, player.y, player.r);//画出player
+}
+
+void  moveOrder()
+{
+	switch (direction)
+	{
+	case 72://上下左右
+		player.y -= player.step; break;
+	case 80:
+		player.y += player.step; break;
+	case 75:
+		player.x -= player.step; break;
+	case 77:
+		player.x += player.step; break;
+	}
+}
