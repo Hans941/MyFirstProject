@@ -28,7 +28,7 @@ struct APPLE//同小球，因为不用移动就不用step
 
 struct APPLE apple;
 struct PLARER player;
-int direction;
+int g_direction;
 
 void main()
 {
@@ -44,7 +44,7 @@ void playgame()
 	{
 		if (_kbhit())//如果有输入的话，改变方向.没有就方向不变
 		{
-			direction = _getch();
+			g_direction = _getch();
 		}
 		moveOrder();//改变玩家的坐标
 		cleardevice();
@@ -71,7 +71,7 @@ void makePlayer()
 
 void  moveOrder()
 {
-	switch (direction)
+	switch (g_direction)
 	{
 	case 72://上下左右
 		player.y -= player.step; break;
