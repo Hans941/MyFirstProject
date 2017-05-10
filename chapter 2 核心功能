@@ -1,0 +1,145 @@
+#include <graphics.h>
+#include<conio.h>
+#include <time.h>
+#include <math.h>
+
+#define GRAPH_WIDE 1300
+#define GRAPH_HIGH 900
+
+void playgame();
+void initgame();
+void makePlayer();
+void  moveOrder();
+void initApple();
+void makeApple();
+int checkBound();
+
+struct PLARER//属性应该有小球坐标 (x, y)，半径 r ,以及移动速度 step
+{
+	int x;
+	int y;
+	int r;
+	float step;
+};
+
+struct APPLE//同小球，因为不用移动就不用step
+{
+	int x;
+	int y;
+	int r;
+};
+
+struct APPLE apple;
+struct PLARER player;
+int g_direction;
+int g_score = 0;
+int g_step = 10;//玩家实际每秒移动像素个数=1000/STEP*player.step
+
+void main()
+{
+	initgraph(GRAPH_WIDE, GRAPH_HIGH);
+	playgame();
+	closegraph();
+}
+
+void playgame()
+{
+	int sign;
+	initgame();
+	while (1)
+	{
+		if (_kbhit())//如果有输入的话，改变方向.没有就方向不变
+		{
+			g_direction = _getch();
+		}
+		moveOrder();//改变玩家的坐标
+		sign = checkBound();//把player状态的判断结果存储下来
+		if (sign == 0)//如果死了
+		{
+			cleardevice();
+			break;
+		}
+		else if (sign == 2)//如果吃到了减肥果
+		{
+			g_score++;
+			if (g_score % 3 == 0)//每吃3个速度变快一次
+			{
+				player.step++;
+			}
+			player.r -= 3;
+			initApple();//新苹果坐标初始化
+		}
+		Sleep(g_step);
+		cleardevice();//清屏
+		makePlayer();//画player图形
+		makeApple();//画apple
+	}
+}
+
+void initgame()
+{
+	setbkcolor(LIGHTGRAY);//设置背景色
+	setfillcolor(CYAN);//设置填充色
+	setlinecolor(CYAN);//设置线条色
+	player.r = 50;//初始化玩家属性
+	player.step = 2;
+	player.x = GRAPH_WIDE / 2;//初始化玩家图形坐标
+	player.y = GRAPH_HIGH / 2;//初始化玩家图形坐标
+	makePlayer();
+	apple.r = 8;
+	initApple();//初始化苹果坐标
+	makeApple();//初始化苹果图形
+}
+
+void makePlayer()
+{
+	fillcircle(player.x, player.y, player.r);//画出player
+}
+
+void makeApple()
+{
+	setfillcolor(LIGHTRED);//画出不同颜色苹果
+	setlinecolor(LIGHTRED);
+	fillcircle(apple.x, apple.y, apple.r);
+	setfillcolor(CYAN);//画完apple后要把颜色恢复成原始设置
+	setlinecolor(CYAN);
+}
+
+void  moveOrder()
+{
+	switch (g_direction)
+	{
+	case 72://上下左右
+		player.y -= player.step; break;
+	case 80:
+		player.y += player.step; break;
+	case 75:
+		player.x -= player.step; break;
+	case 77:
+		player.x += player.step; break;
+	}
+}
+
+void initApple()
+{
+	int x, y;
+	x = GRAPH_WIDE - apple.r;//取x的取值范围，防止出现再墙外
+	y = GRAPH_HIGH - apple.r;
+	apple.x = rand() % x;
+	apple.y = rand() % y;
+}
+
+int checkBound()//0死亡 1存活 2吃果子
+{
+	float distance;//两个物体的圆心距离
+	distance = sqrt((player.x - apple.x)*(player.x - apple.x) + (player.y - apple.y)*(player.y - apple.y));
+	if (player.x<player.r || player.x>GRAPH_WIDE - player.r || player.y<player.r || player.y>GRAPH_HIGH - player.r)//撞墙
+	{
+		return 0;
+	}
+	else if (distance <= player.r + apple.r)//两球相遇
+	{
+		return 2;
+	}
+	return 1;//以上两种情况都没有发生就表示状态未改变
+}
