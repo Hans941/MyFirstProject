@@ -1,3 +1,3 @@
-[我的简书主页](http://www.jianshu.com/u/8c464edeaf89)
+[我的简书主页](http://www.jianshu.com/u/8c464edeaf89)  
 刚开始学编程时，看完谭浩强后试着做的第一个小项目，只是一个移动的小球。两星期后改成了一个贪吃蛇。
 
